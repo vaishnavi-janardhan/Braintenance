@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".MainActivity"
     android:padding="@dimen/dimen_16"
     android:background="@color/colorPrimary">
-<ImageView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:src="@drawable/brain"
-    android:contentDescription="@string/app_name"
-    android:scaleType="centerCrop"
-    android:layout_centerInParent="true"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:contentDescription="@string/app_name"
+        android:scaleType="centerCrop"
+        android:src="@drawable/brain" />
 
     <TextView
         android:id="@+id/app_name"
@@ -44,24 +44,26 @@
         android:drawablePadding="@dimen/dimen_8"
         android:background="@android:color/white"
         android:drawableStart="@drawable/ic_person_black"/>
-<TextView
-    android:id="@+id/tagline"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/tagline"
-    android:layout_above="@+id/start_button"
-    android:layout_centerHorizontal="true"
-    android:padding="@dimen/dimen_8"
-    android:textColor="@android:color/black"
-    style="@style/Base.TextAppearance.AppCompat.Medium"/>
-<android.support.v7.widget.AppCompatButton
-    android:id="@+id/start_button"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/start"
-    android:layout_alignParentBottom="true"
-    android:layout_centerHorizontal="true"
-    android:backgroundTint="@color/colorSecondary"
-    android:textColor="@android:color/white"
-    android:onClick="startQuiz"/>
+
+    <TextView
+        android:id="@+id/tagline"
+        style="@style/Base.TextAppearance.AppCompat.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/start_button"
+        android:layout_centerHorizontal="true"
+        android:padding="@dimen/dimen_8"
+        android:text="@string/tagline"
+        android:textColor="@android:color/black" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/start_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="@color/colorSecondary"
+        android:onClick="startQuiz"
+        android:text="@string/start"
+        android:textColor="@android:color/white" />
 </RelativeLayout>

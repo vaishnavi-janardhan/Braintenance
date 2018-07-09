@@ -1,24 +1,35 @@
 package com.janardhan.vaish.braintenance;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Toast;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.RadioGroup;
-import android.widget.RadioButton;
-import android.widget.CheckBox;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AlertDialog;
-import android.content.DialogInterface;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class QuizActivity extends AppCompatActivity {
 
-    ImageButton img1, img2, img3, img4, img5, img6;
-    TextView mTimer,result;
+    Unbinder unbinder;
+
+    @BindView(R.id.timer)
+    TextView mTimerTextView;
+    @BindView(R.id.result)
+    TextView resultTextView;
+    @BindView(R.id.submit_button)
+    Button submitButton;
+
     private static final String KEY_TEXT_VALUE = "textValue";
     int score=0;
 
@@ -27,35 +38,40 @@ public class QuizActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
 
-        img1 = findViewById(R.id.hint_btn1);
-        img2 = findViewById(R.id.hint_btn2);
-        img3 = findViewById(R.id.hint_btn3);
-        img4 = findViewById(R.id.hint_btn4);
-        img5 = findViewById(R.id.hint_btn5);
-        img6 = findViewById(R.id.hint_btn6);
+        // bind the view using butterknife
+        ButterKnife.bind(this);
 
-        mTimer = findViewById(R.id.timer);
 
+        /**
+         * Timer indicating time left in the format mm:ss
+         * Submit answers when timer ends
+         */
         new CountDownTimer(120000,1000){
             public void onTick(long millisUntilFinished){
-                mTimer.setText(millisUntilFinished/60000 + ":" +(millisUntilFinished%60000)/1000);
+                mTimerTextView.setText(millisUntilFinished / 60000 + ":" + (millisUntilFinished % 60000) / 1000);
             }
             public void onFinish() {
                 submitAnswers();
             }
         }.start();
+
         if (savedInstanceState != null) {
             CharSequence savedText = savedInstanceState.getCharSequence(KEY_TEXT_VALUE);
-            mTimer.setText(savedText);
+            mTimerTextView.setText(savedText);
         }
 
     }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putCharSequence(KEY_TEXT_VALUE, mTimer.getText());
+        outState.putCharSequence(KEY_TEXT_VALUE, mTimerTextView.getText());
     }
 
+    /**
+     * Show hints in the form of toast
+     *
+     * @param view
+     */
     public void showHint1(View view) {
         Toast hint = Toast.makeText(this, R.string.hint1,Toast.LENGTH_SHORT);
         hint.show();
@@ -85,166 +101,142 @@ public class QuizActivity extends AppCompatActivity {
         submitAnswers();
     }
 
-    public void submitAnswers(){
-        Button submitButton = findViewById(R.id.submit_button);
-        RadioGroup group1 = findViewById(R.id.radio1);
-        RadioGroup group2 = findViewById(R.id.radio2);
-        RadioGroup group3 = findViewById(R.id.radio3);
-        RadioGroup group4 = findViewById(R.id.radio4);
-        RadioGroup group6 = findViewById(R.id.radio6);
+    /**
+     * Submit answers after validation
+     */
+    public void submitAnswers() {
 
-        int selectedId1 = group1.getCheckedRadioButtonId();
-        int selectedId2 = group2.getCheckedRadioButtonId();
-        int selectedId3 = group3.getCheckedRadioButtonId();
-        int selectedId4 = group4.getCheckedRadioButtonId();
-        int selectedId6 = group6.getCheckedRadioButtonId();
+        RadioGroup radioGroup1 = findViewById(R.id.radio1);
+        EditText editTextAns2 = findViewById(R.id.answer2);
+        RadioGroup radioGroup3 = findViewById(R.id.radio3);
+        RadioGroup radioGroup4 = findViewById(R.id.radio4);
+        RadioGroup radioGroup6 = findViewById(R.id.radio6);
 
-        RadioButton answer1 = findViewById(R.id.radio1_2);
-        RadioButton answer2 = findViewById(R.id.radio2_1);
-        RadioButton answer3 = findViewById(R.id.radio3_4);
-        RadioButton answer4 = findViewById(R.id.radio4_3);
+        int selectedRadioId1 = radioGroup1.getCheckedRadioButtonId();
+        int selectedRadioId3 = radioGroup3.getCheckedRadioButtonId();
+        int selectedRadioId4 = radioGroup4.getCheckedRadioButtonId();
+        int selectedRadioId6 = radioGroup6.getCheckedRadioButtonId();
 
-        CheckBox answer5_1 = findViewById(R.id.check1);
-        CheckBox answer5_2 = findViewById(R.id.check3);
-        CheckBox option2 = findViewById(R.id.check2);
-        CheckBox option4 = findViewById(R.id.check4);
+        RadioButton radioButtonAns1 = findViewById(R.id.radio1_2);
+        RadioButton radioButtonAns3 = findViewById(R.id.radio3_4);
+        RadioButton radioButtonAns4 = findViewById(R.id.radio4_3);
 
-        RadioButton answer6_1 = findViewById(R.id.radio6_1);
-        RadioButton answer6_2 = findViewById(R.id.radio6_2);
-        RadioButton answer6_3 = findViewById(R.id.radio6_3);
+        CheckBox checkBoxAns5_1 = findViewById(R.id.check1);
+        CheckBox checkBoxAns5_2 = findViewById(R.id.check3);
+        CheckBox checkBoxOpt2 = findViewById(R.id.check2);
+        CheckBox checkBoxOpt4 = findViewById(R.id.check4);
 
-        RadioButton selected1 = findViewById(selectedId1);
-        RadioButton selected2 = findViewById(selectedId2);
-        RadioButton selected3 = findViewById(selectedId3);
-        RadioButton selected4 = findViewById(selectedId4);
-        RadioButton selected6 = findViewById(selectedId6);
+        RadioButton radioButton6_1 = findViewById(R.id.radio6_1);
+        RadioButton radioButton6_2 = findViewById(R.id.radio6_2);
+        RadioButton radioButton6_3 = findViewById(R.id.radio6_3);
 
-        result = findViewById(R.id.result);
+        RadioButton radioButtonSelected1 = findViewById(selectedRadioId1);
+        RadioButton radioButtonSelected3 = findViewById(selectedRadioId3);
+        RadioButton radioButtonSelected4 = findViewById(selectedRadioId4);
+        RadioButton radioButtonSelected6 = findViewById(selectedRadioId6);
 
+        resultTextView = findViewById(R.id.result);
 
-        answer1.setTextColor(Color.GREEN);
-        answer2.setTextColor(Color.GREEN);
-        answer3.setTextColor(Color.GREEN);
-        answer4.setTextColor(Color.GREEN);
-        answer5_1.setTextColor(Color.GREEN);
-        answer5_2.setTextColor(Color.GREEN);
+        radioButtonAns1.setTextColor(Color.GREEN);
+        radioButtonAns3.setTextColor(Color.GREEN);
+        radioButtonAns4.setTextColor(Color.GREEN);
+        checkBoxAns5_1.setTextColor(Color.GREEN);
+        checkBoxAns5_2.setTextColor(Color.GREEN);
 
-        if(group1.getCheckedRadioButtonId() != -1){
-            if(selectedId1 == R.id.radio1_2){
+        if (radioGroup1.getCheckedRadioButtonId() != -1) {
+            if (selectedRadioId1 == R.id.radio1_2) {
                 score++;
-            }
-            else{
-                selected1.setTextColor(Color.RED);
+            } else {
+                radioButtonSelected1.setTextColor(Color.RED);
             }
         }
-        if(group2.getCheckedRadioButtonId() != -1){
-
-            if(selectedId2 == R.id.radio2_1){
-                score++;
-            }
-            else{
-                selected2.setTextColor(Color.RED);
-            }
-        }
-        if(group3.getCheckedRadioButtonId() != -1){
-
-            if(selectedId3 == R.id.radio3_4){
-                score++;
-            }
-            else{
-                selected3.setTextColor(Color.RED);
-            }
-        }
-        if(group4.getCheckedRadioButtonId() != -1){
-
-            if(selectedId4 == R.id.radio4_3){
-                score++;
-            }
-            else{
-                selected4.setTextColor(Color.RED);
-            }
-        }
-        if(answer5_1.isChecked() && answer5_2.isChecked() && !option2.isChecked() && !option4.isChecked()){
+        if (editTextAns2.getText().toString().equals("Tuesday") || editTextAns2.getText().toString().equals("tuesday")) {
             score++;
+            editTextAns2.setTextColor(Color.GREEN);
+        } else {
+            editTextAns2.setTextColor(Color.RED);
         }
-        else{
-            if(option2.isChecked())
-                option2.setTextColor(Color.RED);
-            if(option4.isChecked())
-                option4.setTextColor(Color.RED);
-        }
+        if (radioGroup3.getCheckedRadioButtonId() != -1) {
 
-        if(score >= 0 && score <= 2 ){
-            answer6_1.setTextColor(Color.GREEN);
-            if(answer6_1.isChecked()){
+            if (selectedRadioId3 == R.id.radio3_4) {
                 score++;
-            }
-            else{
-                if(group6.getCheckedRadioButtonId() != -1 )
-                    selected6.setTextColor(Color.RED);
-            }
-            }
-        else if(score >= 3 && score <= 4 ) {
-            answer6_2.setTextColor(Color.GREEN);
-            if(answer6_2.isChecked())
-                score++;
-                else{
-                    if(group6.getCheckedRadioButtonId() != -1)
-                        selected6.setTextColor(Color.RED);
-                }
-            }
-        else {
-            answer6_3.setTextColor(Color.GREEN);
-            if(answer6_3.isChecked()){
-                score++;
-            }
-            else{
-                if(group6.getCheckedRadioButtonId() != -1)
-                    selected6.setTextColor(Color.RED);
+            } else {
+                radioButtonSelected3.setTextColor(Color.RED);
             }
         }
+        if (radioGroup4.getCheckedRadioButtonId() != -1) {
+
+            if (selectedRadioId4 == R.id.radio4_3) {
+                score++;
+            } else {
+                radioButtonSelected4.setTextColor(Color.RED);
+            }
+        }
+        if (checkBoxAns5_1.isChecked() && checkBoxAns5_2.isChecked() && !checkBoxOpt2.isChecked() && !checkBoxOpt4.isChecked()) {
+            score++;
+        } else {
+            if (checkBoxOpt2.isChecked()) checkBoxOpt2.setTextColor(Color.RED);
+            if (checkBoxOpt4.isChecked()) checkBoxOpt4.setTextColor(Color.RED);
+        }
+
+        if (score >= 0 && score <= 2) {
+            radioButton6_1.setTextColor(Color.GREEN);
+            if (radioButton6_1.isChecked()) {
+                score++;
+            } else {
+                if (radioGroup6.getCheckedRadioButtonId() != -1)
+                    radioButtonSelected6.setTextColor(Color.RED);
+            }
+        } else if (score >= 3 && score <= 4) {
+            radioButton6_2.setTextColor(Color.GREEN);
+            if (radioButton6_2.isChecked()) score++;
+            else {
+                if (radioGroup6.getCheckedRadioButtonId() != -1)
+                    radioButtonSelected6.setTextColor(Color.RED);
+            }
+        } else {
+            radioButton6_3.setTextColor(Color.GREEN);
+            if (radioButton6_3.isChecked()) {
+                score++;
+            } else {
+                if (radioGroup6.getCheckedRadioButtonId() != -1)
+                    radioButtonSelected6.setTextColor(Color.RED);
+            }
+        }
 
 
-        result.setVisibility(View.VISIBLE);
-        result.setText("Score: " + score +"/6");
+        resultTextView.setVisibility(View.VISIBLE);
+        resultTextView.setText("Score: " + score + "/6");
 
         submitButton.setVisibility(View.GONE);
-        mTimer.setVisibility(View.GONE);
+        mTimerTextView.setVisibility(View.GONE);
 
-        for(int i=0; i < group1.getChildCount(); i++){
-            group1.getChildAt(i).setEnabled(false);
+        for (int i = 0; i < radioGroup1.getChildCount(); i++) {
+            radioGroup1.getChildAt(i).setEnabled(false);
         }
-        for(int i=0; i < group2.getChildCount(); i++){
-            group2.getChildAt(i).setEnabled(false);
+        editTextAns2.setEnabled(false);
+        for (int i = 0; i < radioGroup3.getChildCount(); i++) {
+            radioGroup3.getChildAt(i).setEnabled(false);
         }
-        for(int i=0; i < group3.getChildCount(); i++){
-            group3.getChildAt(i).setEnabled(false);
+        for (int i = 0; i < radioGroup4.getChildCount(); i++) {
+            radioGroup4.getChildAt(i).setEnabled(false);
         }
-        for(int i=0; i < group4.getChildCount(); i++){
-            group4.getChildAt(i).setEnabled(false);
-        }
-        for(int i=0; i < group6.getChildCount(); i++){
-            group6.getChildAt(i).setEnabled(false);
+        for (int i = 0; i < radioGroup6.getChildCount(); i++) {
+            radioGroup6.getChildAt(i).setEnabled(false);
         }
 
-        answer5_1.setEnabled(false);
-        answer5_2.setEnabled(false);
-        option2.setEnabled(false);
-        option4.setEnabled(false);
+        checkBoxAns5_1.setEnabled(false);
+        checkBoxAns5_2.setEnabled(false);
+        checkBoxOpt2.setEnabled(false);
+        checkBoxOpt4.setEnabled(false);
 
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setTitle(R.string.result);
-        builder1.setMessage("Your score is " + score + "/6");
-        builder1.setCancelable(true);
-        builder1.setPositiveButton("OK", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int id){
-                dialog.cancel();
-            }
-        });
-        AlertDialog alert1 = builder1.create();
-        alert1.show();
+        Toast.makeText(this, "Your score is " + score + "/6", Toast.LENGTH_SHORT).show();
 
     }
+
+    /**
+     * Pops up dialog when the back button is pressed
+     */
     @Override
     public void onBackPressed(){
         AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
@@ -259,5 +251,6 @@ public class QuizActivity extends AppCompatActivity {
         builder2.setNegativeButton("No",null);
         AlertDialog alert2 = builder2.create();
         alert2.show();
-}
+    }
+
 }
